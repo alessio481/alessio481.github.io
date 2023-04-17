@@ -1,96 +1,14 @@
-int rosso = 11, verde = 13, giallo = 12, pin_pulsante = A0, pulsante = 0, tempo = 0, conta = 0;
-float analog;
-bool verde_acceso = true, rosso_acceso = false, giallo_acceso = false, semaforo_acceso = true, antirimbalzon_in_corso = false, somma = false;
-unsigned long fine_tempo = 0;
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>The a download attribute</h1>
+
+<p>Click on the image to download it:<p>
+<a href="1" download>
+  <img src="icon-256.png" alt="W3Schools" width="104" height="142">
+</a>
 
 
-void setup() {
-  pinMode(verde, OUTPUT);
-  pinMode(giallo, OUTPUT);
-  pinMode(rosso, OUTPUT);
-  pinMode(10, OUTPUT);
-  pinMode(pin_pulsante, INPUT);
-  digitalWrite(verde, LOW);
-  digitalWrite(giallo, LOW);
-  digitalWrite(rosso, LOW);
-  Serial.begin(9600);
-  digitalWrite(verde, HIGH);
-  delay(2000);
-}
-
-void loop() {
-  analog = analogRead(pin_pulsante);
-
-  if (analog == 1023.0) {
-
-    somma = true;
-    delay(100);
-
-  } else if (somma == true) {
-    conta++;
-    delay(100);
-    somma = false;
-    Serial.println(conta);
-    if (conta % 2 == 0) {
-      semaforo_acceso = false;
-    } else {
-      semaforo_acceso = true;
-    }
-  }
-
-
-
-  if (millis() % 2000 == 0 && semaforo_acceso && millis() != fine_tempo) {
-    fine_tempo = millis();
-    acceso();
-  } else if (!semaforo_acceso && millis() % 2000 == 0 && millis() != fine_tempo) {
-    fine_tempo = millis();
-    spento();
-  }
-
-}
-
-
-
-
-void spento() {
-  if(verde_acceso){
-    digitalWrite(verde,LOW);
-    }else if(rosso_acceso){
-      digitalWrite(rosso,LOW);
-      }
-  Serial.println("semaforo spento");
-  if (giallo_acceso) {
-    digitalWrite(giallo, LOW);
-    giallo_acceso = false;
-  } else {
-    digitalWrite(giallo, HIGH);
-    giallo_acceso = true;
-  }
-}
-
-
-
-void acceso() {
-
-  Serial.println("semaforo acceso");
-  if (verde_acceso) {
-    digitalWrite(giallo, HIGH);
-    delay(100);
-    digitalWrite(verde, LOW);
-    giallo_acceso = true;
-    verde_acceso = false;
-  } else if (giallo_acceso) {
-    digitalWrite(giallo, LOW);
-    delay(100);
-    digitalWrite(rosso, HIGH);
-    giallo_acceso = false;
-    rosso_acceso = true;
-  } else if (rosso_acceso) {
-    digitalWrite(rosso, LOW);
-    delay(100);
-    digitalWrite(verde, HIGH);
-    verde_acceso = true;
-    rosso_acceso = false;
-  }
-}
+</body>
+</html>
