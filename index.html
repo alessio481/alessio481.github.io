@@ -1,59 +1,96 @@
-<form action="/action_page.php">
-  <label for="fname">"const int RED_PIN = 11;
-const int YELLOW_PIN = 12;
-const int GREEN_PIN = 13;
-const int BUTTON_PIN = A0;
-const int BLINK_PIN = 10;
-unsigned long last_blink_time = 0;
-int button_state = 0;
-int counter = 0;
+int rosso = 11, verde = 13, giallo = 12, pin_pulsante = A0, pulsante = 0, tempo = 0, conta = 0;
+float analog;
+bool verde_acceso = true, rosso_acceso = false, giallo_acceso = false, semaforo_acceso = true, antirimbalzon_in_corso = false, somma = false;
+unsigned long fine_tempo = 0;
+
 
 void setup() {
-  pinMode(GREEN_PIN, OUTPUT);
-  pinMode(YELLOW_PIN, OUTPUT);
-  pinMode(RED_PIN, OUTPUT);
-  pinMode(BLINK_PIN, OUTPUT);
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-  digitalWrite(GREEN_PIN, HIGH);
+  pinMode(verde, OUTPUT);
+  pinMode(giallo, OUTPUT);
+  pinMode(rosso, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(pin_pulsante, INPUT);
+  digitalWrite(verde, LOW);
+  digitalWrite(giallo, LOW);
+  digitalWrite(rosso, LOW);
+  Serial.begin(9600);
+  digitalWrite(verde, HIGH);
   delay(2000);
 }
 
 void loop() {
-  if (digitalRead(BUTTON_PIN) == LOW) {
-    counter++;
+  analog = analogRead(pin_pulsante);
+
+  if (analog == 1023.0) {
+
+    somma = true;
     delay(100);
-    Serial.println(counter);
+
+  } else if (somma == true) {
+    conta++;
+    delay(100);
+    somma = false;
+    Serial.println(conta);
+    if (conta % 2 == 0) {
+      semaforo_acceso = false;
+    } else {
+      semaforo_acceso = true;
+    }
   }
 
-  unsigned long current_time = millis();
-  if (counter % 2 == 0) {
-    // Semaforo spento
-    if (current_time - last_blink_time >= 500) {
-      digitalWrite(YELLOW_PIN, !digitalRead(YELLOW_PIN));
-      last_blink_time = current_time;
-    }
-    digitalWrite(GREEN_PIN, LOW);
-    digitalWrite(RED_PIN, LOW);
-  } else {
-    // Semaforo acceso
-    digitalWrite(YELLOW_PIN, LOW);
-    if (current_time - last_blink_time >= 1000) {
-      digitalWrite(BLINK_PIN, !digitalRead(BLINK_PIN));
-      last_blink_time = current_time;
-    }
-    if (current_time % 2000 < 1000) {
-      // Verde acceso
-      digitalWrite(GREEN_PIN, HIGH);
-      digitalWrite(RED_PIN, LOW);
-    } else {
-      // Rosso acceso
-      digitalWrite(GREEN_PIN, LOW);
-      digitalWrite(RED_PIN, HIGH);
-    }
+
+
+  if (millis() % 2000 == 0 && semaforo_acceso && millis() != fine_tempo) {
+    fine_tempo = millis();
+    acceso();
+  } else if (!semaforo_acceso && millis() % 2000 == 0 && millis() != fine_tempo) {
+    fine_tempo = millis();
+    spento();
   }
-}"</label>
-  <input type="text" id="fname" name="fname"><br><br>
-  <label for="lname">Last name:</label>
-  <input type="text" id="lname" name="lname"><br><br>
-  <input type="submit" value="Submit">
-</form>
+
+}
+
+
+
+
+void spento() {
+  if(verde_acceso){
+    digitalWrite(verde,LOW);
+    }else if(rosso_acceso){
+      digitalWrite(rosso,LOW);
+      }
+  Serial.println("semaforo spento");
+  if (giallo_acceso) {
+    digitalWrite(giallo, LOW);
+    giallo_acceso = false;
+  } else {
+    digitalWrite(giallo, HIGH);
+    giallo_acceso = true;
+  }
+}
+
+
+
+void acceso() {
+
+  Serial.println("semaforo acceso");
+  if (verde_acceso) {
+    digitalWrite(giallo, HIGH);
+    delay(100);
+    digitalWrite(verde, LOW);
+    giallo_acceso = true;
+    verde_acceso = false;
+  } else if (giallo_acceso) {
+    digitalWrite(giallo, LOW);
+    delay(100);
+    digitalWrite(rosso, HIGH);
+    giallo_acceso = false;
+    rosso_acceso = true;
+  } else if (rosso_acceso) {
+    digitalWrite(rosso, LOW);
+    delay(100);
+    digitalWrite(verde, HIGH);
+    verde_acceso = true;
+    rosso_acceso = false;
+  }
+}
