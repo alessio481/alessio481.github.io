@@ -6,9 +6,6 @@
 <body>
 	<pre>
 
-
-
-
 int rosso = 11, verde = 13, giallo = 12, pin_pulsante = 10,intervallo = 1000, conta = 0,stato_bottone = 1, stato_bottone_precedente = 0;
 bool verde_acceso = false, rosso_acceso = false, giallo_acceso = false, semaforo_acceso = true;
 unsigned long tempo = 0;
@@ -51,6 +48,82 @@ void loop() {
   digitalWrite(rosso,rosso_acceso);
   digitalWrite(giallo,giallo_acceso);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+int verde = 13,giallo = 12, rosso = 11,pulsante = 10,stato_rosso = 1,stato_giallo = 1,stato_verde = 1,contatore = 2,intervallo = 500;
+float Lettura_pulsante;
+int button_state = 0,prev_button_state = 0;
+unsigned long ultimo_tempo = 0;
+
+
+
+void setup() {
+
+  pinMode(verde,OUTPUT);
+  pinMode(rosso,OUTPUT);
+  pinMode(verde,OUTPUT);
+  pinMode(pulsante,INPUT_PULLUP);
+}
+
+void loop() {
+  button_state = digitalRead(pulsante);
+  if(button_state != prev_button_state){
+    if(button_state == HIGH){
+       contatore++;
+      }
+    }
+   prev_button_state = button_state;
+
+  digitalWrite(verde,stato_verde);
+  digitalWrite(giallo,stato_giallo);
+  digitalWrite(rosso,stato_rosso); 
+  if(millis() - ultimo_tempo >= intervallo ){
+    Serial.println(millis());
+      switch(contatore % 3){
+        case 0:
+          stato_verde = !stato_verde;
+          if(stato_rosso == HIGH){stato_rosso = LOW;}
+          break;
+        case 1:
+          stato_giallo = !stato_giallo;
+          if(stato_verde == HIGH){stato_verde = LOW;}
+          break;
+        case 2:
+          stato_rosso = !stato_rosso;
+          if(stato_giallo == HIGH){stato_giallo = LOW;}
+          break;
+        default:
+          break;
+      }   
+      ultimo_tempo = millis();
+    
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	</pre>
 </body>
 </html>
