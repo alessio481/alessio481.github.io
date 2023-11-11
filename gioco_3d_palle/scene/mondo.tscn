@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scene/player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scene/mondo.gd" type="Script" id=2]
+[ext_resource path="res://scene/area_ostacoli.gd" type="Script" id=3]
+[ext_resource path="res://scene/HUD.tscn" type="PackedScene" id=4]
+
+[sub_resource type="Environment" id=1]
+background_mode = 1
+glow_enabled = true
+
+[node name="mondo" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="area_ostacoli" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, 0 )
+script = ExtResource( 3 )
+
+[node name="player" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12.1331 )
+collision_layer = 3
+collision_mask = 3
+
+[node name="CanvasLayer" type="CanvasLayer" parent="player"]
+
+[node name="HUD" parent="player/CanvasLayer" instance=ExtResource( 4 )]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 1 )
+
+[connection signal="elimina_cubi" from="player" to="area_ostacoli" method="_on_player_elimina_cubi"]
+[connection signal="genera_cubi" from="player" to="area_ostacoli" method="_on_player_genera_cubi"]
